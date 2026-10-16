@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1224">
+  <title>Регистрация — Компьютер-Софт</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-page">
+  <div class="top-line"></div>
+  <header class="site-header auth-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="{{ url_for('index') }}" aria-label="Компьютер-Софт — главная">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><rect x="4" y="5" width="24" height="17" rx="3" stroke="currentColor" stroke-width="2.2"/><path d="M11 27h10M16 22v5M10 12h12M10 16h7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+        <span class="brand-text">Компьютер<span>Софт</span><small>СЕРВИС РЕМОНТА</small></span>
+      </a>
+      <div class="auth-header-links"><a href="{{ url_for('index') }}">На главную</a><a href="{{ url_for('login') }}">Уже есть аккаунт?</a></div>
+    </div>
+  </header>
+  <main class="auth-main">
+    <section class="auth-card">
+      <div class="auth-eyebrow"><span class="eyebrow-dot"></span> ЛИЧНЫЙ КАБИНЕТ</div>
+      <h1>Создать аккаунт</h1>
+      <p class="auth-lead">Зарегистрируйся, чтобы в одном месте видеть свои заявки на ремонт.</p>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}<div class="flash-list" aria-live="polite">{% for category, message in messages %}<div class="flash-message {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+      {% endwith %}
+      <form method="post" action="{{ url_for('register') }}" class="auth-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="full_name">Имя</label>
+        <input id="full_name" name="full_name" type="text" minlength="2" maxlength="80" autocomplete="name" placeholder="Как к тебе обращаться" required>
+        <label for="email">Электронная почта</label>
+        <input id="email" name="email" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com" required>
+        <label for="password">Пароль</label>
+        <input id="password" name="password" type="password" minlength="8" maxlength="128" autocomplete="new-password" placeholder="Минимум 8 символов" required>
+        <label for="password_confirm">Повтори пароль</label>
+        <input id="password_confirm" name="password_confirm" type="password" minlength="8" maxlength="128" autocomplete="new-password" placeholder="Введи пароль ещё раз" required>
+        <p class="auth-hint">Пароль хранится в защищённом виде. Не используй пароль от других важных аккаунтов.</p>
+        <button type="submit" class="button button-primary auth-submit">Зарегистрироваться <span aria-hidden="true">→</span></button>
+      </form>
+      <p class="auth-switch">Уже зарегистрирован? <a href="{{ url_for('login') }}">Войти</a></p>
+    </section>
+  </main>
+  <footer class="auth-footer">© 2026 Компьютер-Софт · Учебный проект</footer>
+</body>
+</html>

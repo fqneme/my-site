@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1224">
+  <title>Пользователи — Компьютер-Софт</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="admin-page">
+  <div class="top-line"></div>
+  <header class="site-header auth-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="{{ url_for('index') }}" aria-label="Компьютер-Софт — главная">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><rect x="4" y="5" width="24" height="17" rx="3" stroke="currentColor" stroke-width="2.2"/><path d="M11 27h10M16 22v5M10 12h12M10 16h7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+        <span class="brand-text">Компьютер<span>Софт</span><small>СЕРВИС РЕМОНТА</small></span>
+      </a>
+      <div class="auth-header-links">
+        <a href="{{ url_for('admin_dashboard') }}">Заявки</a>
+        <a href="{{ url_for('index') }}">На главную</a>
+        <form action="{{ url_for('logout') }}" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="text-button">Выйти</button></form>
+      </div>
+    </div>
+  </header>
+
+  <main class="container admin-main">
+    <section class="admin-heading">
+      <div>
+        <div class="auth-eyebrow"><span class="eyebrow-dot"></span> УПРАВЛЕНИЕ АККАУНТАМИ</div>
+        <h1>Пользователи</h1>
+        <p>Просматривай аккаунты и при необходимости меняй роль. Удаление аккаунтов не предусмотрено, чтобы случайно не потерять историю заявок.</p>
+      </div>
+      <div class="admin-access-label"><span class="admin-access-dot"></span> Доступ администратора</div>
+    </section>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}<div class="flash-list admin-flashes" aria-live="polite">{% for category, message in messages %}<div class="flash-message {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+    {% endwith %}
+
+    <section class="admin-stats user-admin-stats" aria-label="Статистика пользователей">
+      <article class="admin-stat-card"><span class="admin-stat-icon stat-blue">♙</span><div><small>ВСЕ АККАУНТЫ</small><strong>{{ total_users }}</strong><span>зарегистрировано</span></div></article>
+      <article class="admin-stat-card"><span class="admin-stat-icon stat-violet">♛</span><div><small>АДМИНИСТРАТОРЫ</small><strong>{{ total_admins }}</strong><span>имеют доступ к панели</span></div></article>
+      <article class="admin-stat-card"><span class="admin-stat-icon stat-green">⌕</span><div><small>НАЙДЕНО</small><strong>{{ visible_count }}{% if visible_count == 500 %}+{% endif %}</strong><span>по текущему фильтру</span></div></article>
+    </section>
+
+    <section class="admin-requests-section admin-users-section">
+      <div class="admin-requests-head">
+        <div><div class="auth-eyebrow"><span class="eyebrow-dot"></span> АККАУНТЫ КЛИЕНТОВ</div><h2>Список пользователей</h2><p>Поиск работает по имени, email и номеру аккаунта.</p></div>
+        <a class="button button-secondary" href="{{ url_for('admin_dashboard') }}">← К заявкам</a>
+      </div>
+
+      <form class="admin-filter-form admin-users-filter" method="get" action="{{ url_for('admin_users') }}">
+        <label class="admin-search-field"><span>Поиск</span><input type="search" name="q" value="{{ search }}" maxlength="100" placeholder="Имя, email или ID аккаунта"></label>
+        <label><span>Роль</span><select name="role"><option value="all" {% if selected_role == 'all' %}selected{% endif %}>Все роли</option><option value="user" {% if selected_role == 'user' %}selected{% endif %}>Пользователи</option><option value="admin" {% if selected_role == 'admin' %}selected{% endif %}>Администраторы</option></select></label>
+        <button class="button button-primary admin-filter-button" type="submit">Найти</button>
+        {% if search or selected_role != 'all' %}<a class="admin-reset-link" href="{{ url_for('admin_users') }}">Сбросить</a>{% endif %}
+      </form>
+
+      {% if users_list %}
+        <div class="admin-users-table-wrap">
+          <table class="admin-users-table">
+            <thead><tr><th>ID</th><th>Пользователь</th><th>Дата регистрации</th><th>Роль</th><th>Действие</th></tr></thead>
+            <tbody>
+              {% for person in users_list %}
+                <tr>
+                  <td class="user-id-cell">#{{ person['id'] }}</td>
+                  <td><strong class="admin-user-name">{{ person['full_name'] }}</strong><a class="admin-user-email" href="mailto:{{ person['email'] }}">{{ person['email'] }}</a>{% if person['id'] == current_admin_id %}<span class="current-account-label">Твой аккаунт</span>{% endif %}</td>
+                  <td class="admin-user-date">{{ person['created_at'] }}</td>
+                  <td><span class="role-pill {{ 'role-admin' if person['role'] == 'admin' else 'role-user' }}">{{ 'Администратор' if person['role'] == 'admin' else 'Пользователь' }}</span></td>
+                  <td>
+                    {% if person['id'] == current_admin_id %}
+                      <span class="self-role-note">Свою роль нельзя снять здесь</span>
+                    {% else %}
+                      <form class="user-role-form" action="{{ url_for('admin_update_user_role', user_id=person['id']) }}" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="q" value="{{ search }}">
+                        <input type="hidden" name="filter_role" value="{{ selected_role }}">
+                        <select name="role" aria-label="Роль пользователя {{ person['full_name'] }}"><option value="user" {% if person['role'] == 'user' %}selected{% endif %}>Пользователь</option><option value="admin" {% if person['role'] == 'admin' %}selected{% endif %}>Администратор</option></select>
+                        <button class="button button-primary" type="submit">Сохранить</button>
+                      </form>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% if visible_count == 500 %}<p class="admin-limit-note">Показаны первые 500 пользователей. Уточни поиск, чтобы найти нужный аккаунт.</p>{% endif %}
+      {% else %}
+        <div class="orders-empty admin-empty"><div class="empty-icon">♙</div><h3>Пользователи не найдены</h3><p>Измени поисковый запрос или фильтр роли.</p><a class="button button-secondary" href="{{ url_for('admin_users') }}">Показать всех</a></div>
+      {% endif %}
+    </section>
+  </main>
+  <footer class="auth-footer">© 2026 Компьютер-Софт · Управление пользователями</footer>
+</body>
+</html>

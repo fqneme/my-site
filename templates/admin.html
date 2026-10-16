@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1224">
+  <title>Панель администратора — Компьютер-Софт</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="admin-page">
+  <div class="top-line"></div>
+  <header class="site-header auth-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="{{ url_for('index') }}" aria-label="Компьютер-Софт — главная">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><rect x="4" y="5" width="24" height="17" rx="3" stroke="currentColor" stroke-width="2.2"/><path d="M11 27h10M16 22v5M10 12h12M10 16h7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+        <span class="brand-text">Компьютер<span>Софт</span><small>СЕРВИС РЕМОНТА</small></span>
+      </a>
+      <div class="auth-header-links">
+        <a href="{{ url_for('index') }}">На главную</a>
+        <a href="{{ url_for('account') }}">Личный кабинет</a>
+        <form action="{{ url_for('logout') }}" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="text-button">Выйти</button></form>
+      </div>
+    </div>
+  </header>
+
+  <main class="container admin-main">
+    <section class="admin-heading">
+      <div>
+        <div class="auth-eyebrow"><span class="eyebrow-dot"></span> УПРАВЛЕНИЕ СЕРВИСОМ</div>
+        <h1>Панель администратора</h1>
+        <p>Просматривай заявки клиентов, находи нужные обращения и обновляй их статусы.</p>
+      </div>
+      <div class="admin-access-label"><span class="admin-access-dot"></span> Доступ администратора</div>
+    </section>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}<div class="flash-list admin-flashes" aria-live="polite">{% for category, message in messages %}<div class="flash-message {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+    {% endwith %}
+
+    <section class="admin-stats" aria-label="Общая статистика">
+      <article class="admin-stat-card"><span class="admin-stat-icon stat-blue">▤</span><div><small>ВСЕ ЗАЯВКИ</small><strong>{{ request_count }}</strong><span>за всё время</span></div></article>
+      <article class="admin-stat-card"><span class="admin-stat-icon stat-violet">♙</span><div><small>АККАУНТЫ</small><strong>{{ user_count }}</strong><span>зарегистрировано</span></div></article>
+      <article class="admin-stat-card"><span class="admin-stat-icon stat-amber">◷</span><div><small>НОВЫЕ</small><strong>{{ status_counts.get('Новая', 0) }}</strong><span>ожидают просмотра</span></div></article>
+      <article class="admin-stat-card"><span class="admin-stat-icon stat-green">✓</span><div><small>ВЫПОЛНЕННЫЕ</small><strong>{{ status_counts.get('Выполнена', 0) }}</strong><span>закрытые обращения</span></div></article>
+    </section>
+
+    <section class="admin-status-overview" aria-label="Заявки по статусам">
+      {% for status in statuses %}
+        <a class="admin-status-summary" href="{{ url_for('admin_dashboard', status=status, q=search) }}">
+          <span class="status-pill {{ status_classes.get(status, 'status-new') }}">{{ status }}</span>
+          <strong>{{ status_counts.get(status, 0) }}</strong>
+        </a>
+      {% endfor %}
+    </section>
+
+    <section class="admin-requests-section">
+      <div class="admin-requests-head">
+        <div><div class="auth-eyebrow"><span class="eyebrow-dot"></span> БАЗА ОБРАЩЕНИЙ</div><h2>Заявки клиентов</h2><p>Показано {{ visible_count }}{% if visible_count == 200 %}+{% endif %} записей. Для ускорения поиска вводи номер заявки, имя, телефон или устройство.</p></div>
+        <div class="admin-action-links">
+          <a class="button button-secondary" href="{{ url_for('admin_users') }}">👥 Пользователи</a>
+          <a class="button button-primary" href="{{ url_for('admin_export_excel', status=selected_status, q=search) }}">📥 Скачать Excel</a>
+        </div>
+      </div>
+
+      <form class="admin-filter-form" method="get" action="{{ url_for('admin_dashboard') }}">
+        <label class="admin-search-field"><span>Поиск</span><input type="search" name="q" value="{{ search }}" maxlength="100" placeholder="№ заявки, имя, телефон, модель или email"></label>
+        <label class="admin-status-field"><span>Статус</span><select name="status"><option value="Все" {% if selected_status == 'Все' %}selected{% endif %}>Все статусы</option>{% for status in statuses %}<option value="{{ status }}" {% if selected_status == status %}selected{% endif %}>{{ status }}</option>{% endfor %}</select></label>
+        <button class="button button-primary admin-filter-button" type="submit">Применить</button>
+        {% if search or selected_status != 'Все' %}<a class="admin-reset-link" href="{{ url_for('admin_dashboard') }}">Сбросить</a>{% endif %}
+      </form>
+
+      {% if requests_list %}
+        <div class="admin-request-list">
+          {% for item in requests_list %}
+            <article class="admin-request-card">
+              <div class="admin-request-main">
+                <div class="admin-request-top"><span class="order-number">ЗАЯВКА №{{ item['id'] }}</span><span class="status-pill {{ status_classes.get(item['status'], 'status-new') }}">{{ item['status'] }}</span></div>
+                <h3>{{ item['customer_name'] }}</h3>
+                <div class="admin-request-contact"><a href="tel:{{ item['phone'] }}">{{ item['phone'] }}</a>{% if item['account_email'] %}<span>{{ item['account_email'] }}</span>{% else %}<span class="guest-badge">Без аккаунта</span>{% endif %}</div>
+                <div class="admin-device-label">{{ item['device_type'] }}</div>
+                <p class="admin-problem">{{ item['problem_description'] }}</p>
+                <div class="admin-request-date">Создана: {{ item['created_at'] }}</div>
+              </div>
+              <form class="admin-status-form" action="{{ url_for('admin_update_request_status', request_id=item['id']) }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="q" value="{{ search }}">
+                <input type="hidden" name="current_status" value="{{ selected_status }}">
+                <label for="status-{{ item['id'] }}">Изменить статус</label>
+                <select id="status-{{ item['id'] }}" name="status" required>{% for status in statuses %}<option value="{{ status }}" {% if item['status'] == status %}selected{% endif %}>{{ status }}</option>{% endfor %}</select>
+                <button class="button button-primary admin-save-button" type="submit">Сохранить</button>
+              </form>
+            </article>
+          {% endfor %}
+        </div>
+        {% if visible_count == 200 %}<p class="admin-limit-note">Показаны первые 200 совпадений. Уточни поиск, чтобы найти остальные заявки.</p>{% endif %}
+      {% else %}
+        <div class="orders-empty admin-empty"><div class="empty-icon">⌕</div><h3>Заявки не найдены</h3><p>Попробуй изменить запрос или выбрать другой статус.</p><a class="button button-secondary" href="{{ url_for('admin_dashboard') }}">Показать все заявки</a></div>
+      {% endif %}
+    </section>
+  </main>
+  <footer class="auth-footer">© 2026 Компьютер-Софт · Панель администратора учебного проекта</footer>
+</body>
+</html>

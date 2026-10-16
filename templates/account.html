@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1224">
+  <title>Личный кабинет — Компьютер-Софт</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="account-page">
+  <div class="top-line"></div>
+  <header class="site-header auth-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="{{ url_for('index') }}" aria-label="Компьютер-Софт — главная">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><rect x="4" y="5" width="24" height="17" rx="3" stroke="currentColor" stroke-width="2.2"/><path d="M11 27h10M16 22v5M10 12h12M10 16h7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+        <span class="brand-text">Компьютер<span>Софт</span><small>СЕРВИС РЕМОНТА</small></span>
+      </a>
+      <div class="auth-header-links"><a href="{{ url_for('index') }}">На главную</a>
+        {% if current_user['role'] == 'admin' %}<a href="{{ url_for('admin_dashboard') }}">Админ-панель</a>{% endif %}
+        <form action="{{ url_for('logout') }}" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="text-button">Выйти из аккаунта</button></form>
+      </div>
+    </div>
+  </header>
+  <main class="account-main container">
+    <div class="account-intro">
+      <div><div class="auth-eyebrow"><span class="eyebrow-dot"></span> ЛИЧНЫЙ КАБИНЕТ</div><h1>Привет, {{ current_user['full_name'] }}!</h1><p>Здесь отображаются заявки, созданные из твоего аккаунта.</p></div>
+      <a class="button button-primary" href="{{ url_for('index') }}#contact">+ Новая заявка</a>
+    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}<div class="flash-list account-flashes" aria-live="polite">{% for category, message in messages %}<div class="flash-message {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+    {% endwith %}
+    <section class="account-profile-card">
+      <div class="profile-avatar" aria-hidden="true">{{ current_user['full_name'][0]|upper }}</div>
+      <div class="profile-details"><span>ИМЯ</span><b>{{ current_user['full_name'] }}</b></div>
+      <div class="profile-details"><span>ЭЛЕКТРОННАЯ ПОЧТА</span><b>{{ current_user['email'] }}</b></div>
+      <div class="profile-details"><span>ДАТА РЕГИСТРАЦИИ</span><b>{{ current_user['created_at'] }}</b></div>
+    </section>
+    <section class="orders-section">
+      <div class="orders-heading"><div><div class="auth-eyebrow"><span class="eyebrow-dot"></span> ИСТОРИЯ ОБРАЩЕНИЙ</div><h2>Мои заявки</h2></div><span class="orders-count">Всего: {{ orders|length }}</span></div>
+      {% if orders %}
+        <div class="order-list">
+          {% for order in orders %}
+            <article class="order-card">
+              <div class="order-card-top"><span class="order-number">Заявка №{{ order['id'] }}</span><span class="status-pill {{ status_classes.get(order['status'], 'status-new') }}">{{ order['status'] }}</span></div>
+              <h3>{{ order['device_type'] }}</h3>
+              <p class="order-description">{{ order['problem_description'] }}</p>
+              <div class="order-meta"><span>Телефон: {{ order['phone'] }}</span><span>Создана: {{ order['created_at'] }}</span></div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="orders-empty"><div class="empty-icon">▤</div><h3>Пока нет заявок</h3><p>Оформи первую заявку — она появится здесь вместе со своим статусом.</p><a class="button button-primary" href="{{ url_for('index') }}#contact">Оставить заявку</a></div>
+      {% endif %}
+    </section>
+  </main>
+  <footer class="auth-footer">© 2026 Компьютер-Софт · Учебный проект</footer>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Компьютер-Софт — ремонт компьютеров, ноутбуков, телефонов и планшетов. Оставьте заявку онлайн.">
+  <meta name="theme-color" content="#0b1224">
+  <title>Компьютер-Софт — ремонт техники</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</head>
+<body>
+  <div class="top-line"></div>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="#home" aria-label="Компьютер-Софт — главная">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none"><rect x="4" y="5" width="24" height="17" rx="3" stroke="currentColor" stroke-width="2.2"/><path d="M11 27h10M16 22v5M10 12h12M10 16h7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </span>
+        <span class="brand-text">Компьютер<span>Софт</span><small>СЕРВИС РЕМОНТА</small></span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="main-nav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="main-nav" id="main-nav" aria-label="Главная навигация">
+        <a href="#services">Услуги</a>
+        <a href="#about">О сервисе</a>
+        <a href="#prices">Цены</a>
+        <a href="{{ url_for('contacts') }}">Контакты</a>
+        {% if current_user %}
+          <a class="nav-login" href="{{ url_for('account') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/></svg>Личный кабинет</a>
+          {% if current_user['role'] == 'admin' %}<a class="nav-register" href="{{ url_for('admin_dashboard') }}">Админ-панель</a>{% endif %}
+          <form action="{{ url_for('logout') }}" method="post" class="nav-logout-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="nav-login nav-logout">Выйти</button></form>
+        {% else %}
+          <a class="nav-login" href="{{ url_for('login') }}">Войти</a>
+          <a class="nav-register" href="{{ url_for('register') }}">Регистрация</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero section" id="home">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> СЕРВИСНЫЙ ЦЕНТР · КОМПЬЮТЕР-СОФТ</div>
+          <h1>Техника снова<br>работает. <span>Ты — тоже.</span></h1>
+          <p class="hero-lead">Ремонтируем компьютеры, ноутбуки и мобильные устройства. Объясняем без сложных терминов и заранее согласовываем стоимость.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#contact">Оставить заявку <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="button button-secondary" href="#services">Наши услуги</a>
+          </div>
+          <div class="hero-note"><span class="check-bubble"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span><span>Понятные условия <b>без неприятных сюрпризов</b></span></div>
+        </div>
+        <div class="hero-visual" aria-label="Иллюстрация устройств и инструментов ремонта">
+          <div class="visual-orbit orbit-one"></div><div class="visual-orbit orbit-two"></div>
+          <div class="floating-tag tag-top"><span class="tag-icon purple"><svg viewBox="0 0 24 24"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/></svg></span><span><b>Бережный ремонт</b><small>Внимание к деталям</small></span></div>
+          <div class="device-stage">
+            <div class="back-glow"></div>
+            <div class="laptop-screen"><div class="screen-top"><i></i><i></i><i></i></div><div class="screen-content"><div class="screen-sidebar"><b></b><b></b><b></b><b></b></div><div class="screen-main"><div class="screen-title"></div><div class="screen-chart"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="screen-lines"><i></i><i></i><i></i></div></div></div><div class="screen-bottom"></div></div>
+            <div class="laptop-base"><div class="trackpad"></div></div>
+            <div class="phone-device"><div class="phone-notch"></div><div class="phone-ui"><span class="phone-status"></span><span></span><span></span><span class="phone-button"></span></div></div>
+            <div class="tool-token tool-one"><svg viewBox="0 0 24 24"><path d="m14 7 3-3a5 5 0 0 1-6.5 6.5L5 16a2.1 2.1 0 0 0 3 3l5.5-5.5A5 5 0 0 1 20 7l-3 3-3-3Z"/></svg></div>
+            <div class="tool-token tool-two"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/></svg></div>
+          </div>
+          <div class="floating-tag tag-bottom"><span class="tag-icon green"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg></span><span><b>Заявка оформлена</b><small>Всё под контролем</small></span><span class="tag-pulse"></span></div>
+          <div class="hero-visual-label">ТЕХНИКА · ДИАГНОСТИКА · РЕМОНТ</div>
+        </div>
+      </div>
+      <div class="container hero-stats">
+        <div><span class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v5c0 5 3.4 8 8 10 4.6-2 8-5 8-10V6l-8-3Z"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/></svg></span><span><b>Аккуратный подход</b><small>Бережно к твоей технике</small></span></div>
+        <div><span class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span><b>Экономим твоё время</b><small>Заявка онлайн за пару минут</small></span></div>
+        <div><span class="stat-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 3V5Z"/><path d="M8 9h8M8 12h5"/></svg></span><span><b>Всегда на связи</b><small>Объясняем каждый этап</small></span></div>
+      </div>
+    </section>
+
+    <section class="section services-section" id="services">
+      <div class="container">
+        <div class="section-heading"><div><div class="eyebrow"><span class="eyebrow-dot"></span> ЧЕМ ПОМОЖЕМ</div><h2>Техника не должна<br><span>мешать твоим планам</span></h2></div><p>Подберём решение для устройства, которое стало работать медленно, перестало включаться или нуждается в обслуживании.</p></div>
+        <div class="services-grid">
+          <article class="service-card"><div class="service-icon blue"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><span class="card-number">01</span><h3>Компьютеры</h3><p>Диагностика, обслуживание, комплектующие и решение программных проблем.</p><a href="#contact" class="text-link">Обсудить ремонт <span>↗</span></a></article>
+          <article class="service-card"><div class="service-icon violet"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="17" rx="2"/><path d="M9 22h6M8 5h8"/></svg></div><span class="card-number">02</span><h3>Ноутбуки</h3><p>Помощь с перегревом, медленной работой, зарядкой и настройкой системы.</p><a href="#contact" class="text-link">Обсудить ремонт <span>↗</span></a></article>
+          <article class="service-card"><div class="service-icon orange"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 5h4M11 18h2"/></svg></div><span class="card-number">03</span><h3>Телефоны</h3><p>Диагностика неисправностей, настройка приложений и помощь с системой.</p><a href="#contact" class="text-link">Обсудить ремонт <span>↗</span></a></article>
+          <article class="service-card"><div class="service-icon green"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 5h8M8 18h8"/></svg></div><span class="card-number">04</span><h3>Планшеты и другое</h3><p>Поможем разобраться с неполадками и подскажем дальнейшие шаги.</p><a href="#contact" class="text-link">Обсудить ремонт <span>↗</span></a></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section about-section" id="about">
+      <div class="container about-grid">
+        <div class="about-art"><div class="about-circle circle-big"></div><div class="about-circle circle-small"></div><div class="checklist-card"><div class="checklist-head"><span>CS</span><div><b>План ремонта</b><small>Каждый шаг прозрачен</small></div></div><div class="checklist-row"><i class="done">✓</i><span>Принять заявку</span><b>Готово</b></div><div class="checklist-row"><i class="active-step">2</i><span>Провести диагностику</span><b>Далее</b></div><div class="checklist-row"><i>3</i><span>Согласовать стоимость</span></div><div class="checklist-row"><i>4</i><span>Выполнить ремонт</span></div><div class="check-progress"><span></span></div><small class="checklist-caption">ПОНЯТНО · ПОЭТАПНО · ЧЕСТНО</small></div><div class="gear gear-one">✳</div><div class="gear gear-two">✣</div></div>
+        <div class="about-content"><div class="eyebrow"><span class="eyebrow-dot"></span> НАШ ПОДХОД</div><h2>Разбираемся в проблеме.<br><span>Объясняем решение.</span></h2><p>В «Компьютер-Софт» мы считаем, что хороший сервис начинается с понятного общения. Сначала узнаём, что случилось, затем согласовываем дальнейшие действия.</p><div class="benefit-list"><div><span class="benefit-check">✓</span><div><b>Сначала — диагностика</b><p>Не делаем выводов до того, как разобрались в проблеме.</p></div></div><div><span class="benefit-check">✓</span><div><b>Стоимость согласуем заранее</b><p>Ты понимаешь предполагаемые расходы до начала работ.</p></div></div><div><span class="benefit-check">✓</span><div><b>Держим в курсе</b><p>Рассказываем, что уже сделано и какой следующий шаг.</p></div></div></div><a class="button button-dark" href="#contact">Связаться с нами <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      </div>
+    </section>
+
+    <section class="section prices-section" id="prices">
+      <div class="container">
+        <div class="section-heading"><div><div class="eyebrow"><span class="eyebrow-dot"></span> СТОИМОСТЬ</div><h2>Понимай, на что<br><span>ориентироваться</span></h2></div><p>Цена зависит от модели и причины неисправности. Ниже — примеры для знакомства с услугами, не окончательный прайс.</p></div>
+        <div class="price-grid">
+          <article class="price-card"><span class="price-label">ПРОВЕРКА</span><h3>Диагностика</h3><p>Первичная проверка устройства и поиск причины неисправности.</p><div class="price-value">от <b>500 ₽</b></div><a href="#contact" class="button button-price">Уточнить детали <span>↗</span></a></article>
+          <article class="price-card featured"><span class="popular-label">ЧАСТО НУЖНО</span><span class="price-label">ОБСЛУЖИВАНИЕ</span><h3>Настройка системы</h3><p>Помощь с программами, настройками и базовыми сбоями системы.</p><div class="price-value">от <b>900 ₽</b></div><a href="#contact" class="button button-primary button-price">Уточнить детали <span>↗</span></a></article>
+          <article class="price-card"><span class="price-label">ПО ЗАПРОСУ</span><h3>Ремонт устройства</h3><p>Стоимость определим после выяснения причины и объёма работ.</p><div class="price-value"><b>По оценке</b></div><a href="#contact" class="button button-price">Оставить заявку <span>↗</span></a></article>
+        </div><p class="price-disclaimer"><span>ⓘ</span> Цены на сайте учебные, ориентировочные. Итоговую стоимость необходимо согласовать после диагностики.</p>
+      </div>
+    </section>
+
+    <section class="section contact-section" id="contact">
+      <div class="container contact-grid">
+        <div class="contact-copy"><div class="eyebrow eyebrow-light"><span class="eyebrow-dot"></span> НАЧНЁМ С ПРОСТОГО</div><h2>Расскажи, что<br>случилось с <span>техникой.</span></h2><p>Заполни форму — заявка сохранится, а мы сможем связаться с тобой и обсудить дальнейшие действия.</p><div class="contact-perks"><div><span>01</span> Опиши проблему</div><div><span>02</span> Оставь контакт</div><div><span>03</span> Обсудим решение</div></div><div class="contact-mini-note"><span class="note-shield"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v5c0 5 3.4 8 8 10 4.6-2 8-5 8-10V6l-8-3Z"/></svg></span><span><b>Твои данные нужны для связи</b><small>Не указывай пароли или коды подтверждения.</small></span></div></div>
+        <div class="contact-form-card">
+          <div class="form-heading"><div><span class="form-kicker">ЗАЯВКА № —</span><h3>Оставить заявку</h3></div><span class="form-icon"><svg viewBox="0 0 24 24"><path d="M8 3h8M9 3v3l-5 9a4 4 0 0 0 3.5 6h9a4 4 0 0 0 3.5-6l-5-9V3M8 14h8"/></svg></span></div>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}<div class="flash-list" aria-live="polite">{% for category, message in messages %}<div class="flash-message {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+          {% endwith %}
+          <form action="{{ url_for('create_request') }}" method="post" class="request-form" id="request-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label for="customer_name">Как к тебе обращаться</label><input id="customer_name" name="customer_name" type="text" minlength="2" maxlength="80" placeholder="Твоё имя" autocomplete="name" value="{{ current_user['full_name'] if current_user else '' }}" required>
+            <label for="phone">Телефон для связи</label><input id="phone" name="phone" type="tel" inputmode="tel" minlength="7" maxlength="25" pattern="\+?[0-9\s().-]+" title="Введи от 7 до 15 цифр. Можно использовать +, пробелы, скобки, точку и дефис." placeholder="+7 (___) ___-__-__" autocomplete="tel" aria-describedby="phone-help" required><small id="phone-help" class="field-hint">Только цифры и символы + ( ) - .; от 7 до 15 цифр.</small>
+            <label for="device_type">Что нужно отремонтировать?</label><div class="select-wrap"><select id="device_type" name="device_type" required><option value="" disabled selected>Выбери тип устройства</option><option>Компьютер</option><option>Ноутбук</option><option>Телефон</option><option>Планшет</option><option>Другая техника</option></select><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div>
+            <label for="problem_description">Опиши проблему</label><textarea id="problem_description" name="problem_description" rows="4" minlength="5" maxlength="1200" placeholder="Например: ноутбук сильно нагревается и выключается…" required></textarea>
+            <div class="form-footer"><span><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Данные останутся в заявке</span><button type="submit" class="button button-primary form-submit">Отправить заявку <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="container footer-main"><a class="brand brand-footer" href="#home"><span class="brand-mark"><svg viewBox="0 0 32 32" fill="none"><rect x="4" y="5" width="24" height="17" rx="3" stroke="currentColor" stroke-width="2.2"/><path d="M11 27h10M16 22v5M10 12h12M10 16h7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span><span class="brand-text">Компьютер<span>Софт</span><small>СЕРВИС РЕМОНТА</small></span></a><p>Помогаем технике работать,<br>а тебе — заниматься своим делом.</p><div class="footer-links"><a href="#services">Услуги</a><a href="#about">О сервисе</a><a href="#prices">Цены</a><a href="{{ url_for('contacts') }}">Контакты</a><a href="#contact">Заявка</a></div></div><div class="container footer-bottom"><span>© 2026 Компьютер-Софт</span><span>Учебный проект · Сайт сервисного центра</span><a href="#home">Наверх ↑</a></div></footer>
+</body>
+</html>

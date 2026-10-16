@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Контакты сервисного центра Компьютер-Софт. Оставьте заявку на ремонт компьютера, ноутбука, телефона или планшета.">
+  <meta name="theme-color" content="#0b1224">
+  <title>Контакты — Компьютер-Софт</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</head>
+<body class="contacts-page">
+  <div class="top-line"></div>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="{{ url_for('index') }}" aria-label="Компьютер-Софт — главная">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><rect x="4" y="5" width="24" height="17" rx="3" stroke="currentColor" stroke-width="2.2"/><path d="M11 27h10M16 22v5M10 12h12M10 16h7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+        <span class="brand-text">Компьютер<span>Софт</span><small>СЕРВИС РЕМОНТА</small></span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="main-nav"><span></span><span></span><span></span></button>
+      <nav class="main-nav" id="main-nav" aria-label="Главная навигация">
+        <a href="{{ url_for('index') }}#services">Услуги</a>
+        <a href="{{ url_for('index') }}#about">О сервисе</a>
+        <a href="{{ url_for('index') }}#prices">Цены</a>
+        <a href="{{ url_for('contacts') }}" aria-current="page">Контакты</a>
+        {% if current_user %}
+          <a class="nav-login" href="{{ url_for('account') }}">Личный кабинет</a>
+          {% if current_user['role'] == 'admin' %}<a class="nav-register" href="{{ url_for('admin_dashboard') }}">Админ-панель</a>{% endif %}
+          <form action="{{ url_for('logout') }}" method="post" class="nav-logout-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="nav-login nav-logout">Выйти</button></form>
+        {% else %}
+          <a class="nav-login" href="{{ url_for('login') }}">Войти</a>
+          <a class="nav-register" href="{{ url_for('register') }}">Регистрация</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="contacts-hero">
+      <div class="container contacts-hero-grid">
+        <div class="contacts-hero-copy">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> КОНТАКТЫ И ПОДДЕРЖКА</div>
+          <h1>Давай найдём<br>решение <span>вместе.</span></h1>
+          <p>Расскажи, что случилось с устройством. Мы зафиксируем обращение, чтобы можно было уточнить детали и согласовать дальнейшие шаги.</p>
+          <div class="contacts-hero-actions">
+            <a class="button button-primary" href="{{ url_for('index') }}#contact">Оставить заявку <span aria-hidden="true">↗</span></a>
+            {% if current_user %}<a class="button button-secondary" href="{{ url_for('account') }}">Мои заявки</a>{% else %}<a class="button button-secondary" href="{{ url_for('register') }}">Создать аккаунт</a>{% endif %}
+          </div>
+          <div class="contacts-note"><span class="contacts-note-icon">✓</span><span><b>Никаких сложных формулировок</b><small>Опиши проблему своими словами — этого достаточно для первого обращения.</small></span></div>
+        </div>
+        <div class="contacts-hero-art" aria-hidden="true">
+          <div class="contacts-art-glow"></div>
+          <div class="contacts-art-window"><div class="contacts-art-top"><i></i><i></i><i></i><span>support / request</span></div><div class="contacts-art-content"><div class="contacts-art-icon">✉</div><b>Обращение создано</b><small>Следующий шаг — уточнить детали</small><div class="contacts-art-line wide"></div><div class="contacts-art-line"></div><div class="contacts-art-pill"><span></span> Заявка готова к обработке</div></div></div>
+          <div class="contacts-float-card contacts-float-top"><span>24/7</span><small>форма доступна<br>на странице</small></div>
+          <div class="contacts-float-card contacts-float-bottom"><span class="contacts-float-check">✓</span><small>История заявок<br>в личном кабинете</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section contacts-info-section">
+      <div class="container">
+        <div class="section-heading"><div><div class="eyebrow"><span class="eyebrow-dot"></span> КАК С НАМИ СВЯЗАТЬСЯ</div><h2>Начни с удобного<br><span>способа обращения</span></h2></div><p>Сайт — учебный проект. Здесь показан сценарий связи с сервисом; реальные адрес и телефон можно добавить после их подтверждения.</p></div>
+        <div class="contacts-info-grid">
+          <article class="contacts-info-card"><span class="contacts-info-icon icon-blue">✉</span><span class="contacts-card-kicker">ОБРАЩЕНИЕ</span><h3>Оставить заявку</h3><p>Напиши имя, телефон, тип устройства и кратко опиши неисправность.</p><a href="{{ url_for('index') }}#contact" class="contacts-card-link">Перейти к форме <span>↗</span></a></article>
+          <article class="contacts-info-card"><span class="contacts-info-icon icon-violet">♙</span><span class="contacts-card-kicker">ЛИЧНЫЙ КАБИНЕТ</span><h3>Проверить статус</h3><p>После входа можно смотреть заявки, которые были отправлены из аккаунта.</p>{% if current_user %}<a href="{{ url_for('account') }}" class="contacts-card-link">Мои заявки <span>↗</span></a>{% else %}<a href="{{ url_for('login') }}" class="contacts-card-link">Войти в аккаунт <span>↗</span></a>{% endif %}</article>
+          <article class="contacts-info-card"><span class="contacts-info-icon icon-green">◎</span><span class="contacts-card-kicker">УТОЧНЕНИЕ ДЕТАЛЕЙ</span><h3>Согласовать следующий шаг</h3><p>Контактный номер и детали устройства указываются при оформлении заявки.</p><a href="{{ url_for('index') }}#contact" class="contacts-card-link">Описать проблему <span>↗</span></a></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section contacts-steps-section">
+      <div class="container contacts-steps-layout">
+        <div><div class="eyebrow"><span class="eyebrow-dot"></span> ПОШАГОВО</div><h2>Что произойдёт<br><span>после заявки?</span></h2><p>Мы не придумываем стоимость до понимания задачи. Сначала фиксируем обращение, затем уточняем детали и согласуем дальнейшие действия.</p><a class="button button-dark" href="{{ url_for('index') }}#contact">Заполнить форму <span>↗</span></a></div>
+        <div class="contacts-steps-list">
+          <article><span>01</span><div><h3>Ты описываешь проблему</h3><p>Укажи тип техники и симптомы — короткого описания достаточно для начала.</p></div></article>
+          <article><span>02</span><div><h3>Заявка сохраняется</h3><p>Если ты вошёл в аккаунт, обращение появится в личном кабинете.</p></div></article>
+          <article><span>03</span><div><h3>Уточняются детали</h3><p>Перед ремонтом необходимо согласовать диагностику, стоимость и следующие шаги.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section contacts-faq-section">
+      <div class="container contacts-faq-layout">
+        <div><div class="eyebrow"><span class="eyebrow-dot"></span> ЧАСТЫЕ ВОПРОСЫ</div><h2>Коротко<br>о главном</h2><p>Не нашёл ответ? Просто оставь заявку с описанием своей ситуации.</p></div>
+        <div class="contacts-faq-list">
+          <details><summary>Обязательно ли регистрироваться?</summary><p>Нет, отправить первичную заявку можно и без аккаунта. Регистрация нужна, чтобы видеть историю заявок, привязанных к профилю.</p></details>
+          <details><summary>Можно ли узнать цену сразу?</summary><p>На сайте указаны только ориентировочные учебные цены. Итоговую стоимость следует согласовать после уточнения причины неисправности.</p></details>
+          <details><summary>Где посмотреть свои обращения?</summary><p>Войди в аккаунт и открой личный кабинет. Там показываются заявки, созданные из этого аккаунта.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="container footer-main"><a class="brand brand-footer" href="{{ url_for('index') }}"><span class="brand-mark"><svg viewBox="0 0 32 32" fill="none"><rect x="4" y="5" width="24" height="17" rx="3" stroke="currentColor" stroke-width="2.2"/><path d="M11 27h10M16 22v5M10 12h12M10 16h7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span><span class="brand-text">Компьютер<span>Софт</span><small>СЕРВИС РЕМОНТА</small></span></a><p>Помогаем технике работать,<br>а тебе — заниматься своим делом.</p><div class="footer-links"><a href="{{ url_for('index') }}#services">Услуги</a><a href="{{ url_for('index') }}#prices">Цены</a><a href="{{ url_for('contacts') }}">Контакты</a><a href="{{ url_for('index') }}#contact">Заявка</a></div></div><div class="container footer-bottom"><span>© 2026 Компьютер-Софт</span><span>Учебный проект · Сайт сервисного центра</span><a href="#">Наверх ↑</a></div></footer>
+</body>
+</html>
